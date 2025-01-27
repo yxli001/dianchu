@@ -1,5 +1,6 @@
 {
-  "projects": {
-    "default": "dianchu-5af98"
-  }
+    "projects": {
+        "dev": "dianchu-5af98",
+        "prod": "dianchu-prod"
+    }
 }

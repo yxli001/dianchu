@@ -1,4 +1,6 @@
 import { firestore } from "@/lib/firebaseAdmin";
+import { Dish } from "@/types/Dish";
+import { Table } from "@/types/Table";
 import { User } from "@/types/User";
 
 const converter = <T>() => ({
@@ -12,6 +14,8 @@ const Model = <T>(collectionPath: string) =>
 
 const db = {
     users: Model<User>("users"),
+    table: Model<Table>("table"),
+    dish: Model<Dish>("dish"),
 };
 
 export { db };

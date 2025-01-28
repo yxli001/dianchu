@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model User {
+  id             String  @id @default(uuid())
+  name           String?
+  email          String? @unique
+  profilePicture String?
+  isGuest        Boolean @default(true)
+  dishes         Dish[]
+  tables         Table[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items OrderItem[] @ignore // not needed but forced by prisma
+}
+
+model Dish {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  image       String?
+  cookId      String
+  cook        User    @relation(fields: [cookId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items OrderItem[] @ignore // not needed but forced by prisma
+}
+
+model Table {
+  id     String  @id @default(uuid())
+  cookId String
+  cook   User    @relation(fields: [cookId], references: [id])
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id      String      @id @default(uuid())
+  tableId String
+  table   Table       @relation(fields: [tableId], references: [id])
+  status  Int         @default(0) // 0 - in progress, 1 - submitted
+  items   OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+  id       String @id @default(uuid())
+  orderId  String
+  order    Order  @relation(fields: [orderId], references: [id])
+  dishId   String
+  dish     Dish   @relation(fields: [dishId], references: [id])
+  quantity Int
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
